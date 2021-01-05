@@ -34,6 +34,17 @@ def compile(in_path, out_path):
                 else:
                     fout.write(c)
 
+def traverse(in_path, out_path):
+    if os.path.isfile(in_path):
+        compile(in_path, out_path)
+    elif os.path.isdir(in_path):
+        if not os.path.exists(out_path):
+            os.mkdir(out_path)
+        subs = os.listdir(in_path)
+        for sub in subs:
+            traverse(in_path + "/" + sub, out_path + "/" + sub)
+    else:
+        error("Could not find " + in_path)
 
 usage = "usage: %prog input output"
 parser = optparse.OptionParser(usage=usage)
@@ -46,9 +57,4 @@ if len(args) != 2:
 in_path = args[0]
 out_path = args[1]
 
-if os.path.isfile(in_path):
-    compile(in_path, out_path)
-elif os.path.isdir(in_path):
-    error("Directories not yet supported")
-else:
-    error("Could not find " + in_path)
+traverse(in_path, out_path)
