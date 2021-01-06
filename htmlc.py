@@ -3,7 +3,8 @@ import os.path
 import subprocess
 import sys
 
-escapable = ["{", "}", "\\"]
+cmd_start = "{"
+cmd_end = "}"
 esc = "\\"
 
 usage = "usage: %prog input [-o output] [-n]"
@@ -35,15 +36,15 @@ def compile(in_path, out_path):
     cmd = None
     escaped = False
     for c in contents:
-        if c == "{" and not escaped and cmd == None:
+        if c == cmd_start and not escaped and cmd == None:
             cmd = ""
-        elif c == "}" and not escaped and cmd != None:
+        elif c == cmd_end and not escaped and cmd != None:
             out = subprocess.check_output(cmd, shell=True, text=True)
             if not opts.keep_newline:
                 out = out.rstrip("\n")
             fout.write(out)
             cmd = None
-        elif c == "\\" and not escaped:
+        elif c == esc and not escaped:
             escaped = True
         else:
             escaped = False
