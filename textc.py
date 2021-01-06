@@ -97,6 +97,8 @@ def compile(in_path, out_path):
             fout.close()
     except (PermissionError, IOError) as e:
         error("Failed to write to " + out_path + ": " + str(e))
+    except subprocess.CalledProcessError as e:
+        error("Failed to execute process " + cmd + " from file " + in_path + ": " + str(e))
     finally:
         if fout is not None and out_path is not None:
             fout.close()
