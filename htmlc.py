@@ -10,7 +10,7 @@ esc = "\\"
 usage = "usage: %prog input [-o output] [-nv]"
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
-parser.add_option("-n", "--keep-newline", action="store_true", dest="keep_newline", help="Prevent trailing newline being stripped from command output", default=False)
+parser.add_option("-n", "--keep-newlines", action="store_true", dest="keep_newlines", help="Prevent trailing newline being stripped from command output", default=False)
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
 
 (opts, args) = parser.parse_args()
@@ -47,7 +47,7 @@ def compile(in_path, out_path):
             cmd = ""
         elif c == cmd_end and not escaped and cmd != None:
             out = subprocess.check_output(cmd, shell=True, text=True)
-            if not opts.keep_newline:
+            if not opts.keep_newlines:
                 out = out.rstrip("\n")
             fout.write(out)
             cmd = None
