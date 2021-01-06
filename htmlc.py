@@ -7,11 +7,14 @@ cmd_start = "{"
 cmd_end = "}"
 esc = "\\"
 
-usage = "usage: %prog input [-o output] [-nv]"
+yes = ["y", "yes"]
+
+usage = "usage: %prog input [-o output] [-nva]"
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
 parser.add_option("-n", "--keep-newlines", action="store_true", dest="keep_newlines", help="Prevent trailing newline being stripped from command output", default=False)
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
+parser.add_option("-a", "--ask", action="store_true", dest="ask", help="Ask before overwriting file", default=False)
 
 (opts, args) = parser.parse_args()
 
@@ -37,6 +40,12 @@ def compile(in_path, out_path):
 
     if contents == None:
         error("Failed to read " + in_path)
+
+    if opts.ask and out_path is not None and os.path.exists(out_path):
+        if input("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
+            if opts.verbose:
+                print("Skipping " + out_path)
+            return
 
     fout = (open(out_path, "w") if out_path is not None else sys.stdout)
 
