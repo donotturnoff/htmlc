@@ -37,6 +37,8 @@ def error(msg):
     exit()
 
 def compile(in_path, out_path):
+    cwd = os.path.split(in_path)[0]
+
     if opts.verbose:
         if out_path == None:
             info("Compiling " + in_path)
@@ -74,7 +76,7 @@ def compile(in_path, out_path):
             if c == cmd_start and not escaped and cmd == None:
                 cmd = ""
             elif c == cmd_end and not escaped and cmd != None:
-                out = subprocess.check_output(cmd, shell=True, text=True)
+                out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True)
                 if not opts.keep_newlines:
                     out = out.rstrip("\n")
                 fout.write(out)
