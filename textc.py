@@ -53,6 +53,9 @@ def compile(in_path, out_path):
         contents = fin.read()
     except (PermissionError, IOError) as e:
         error("Failed to read " + in_path + ": " + str(e))
+    except UnicodeDecodeError:
+        copyfile(in_path, out_path)
+        return
     finally:
         if fin is not None:
             fin.close()
