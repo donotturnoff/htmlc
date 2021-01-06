@@ -10,15 +10,18 @@ def error(msg):
     print("[-] " + msg)
     exit()
 
-def compile(in_path, out_path, dry):
+def compile(in_path, out_path):
     contents = None
+
     fin = open(in_path, "r")
     contents = fin.read()
     fin.close()
+
     if contents == None:
         error("Failed to read " + in_path)
 
-    fout = (open(out_path, "w") if not dry else sys.stdout)
+    fout = (open(out_path, "w") if out_path is not None else sys.stdout)
+
     cmd = None
     escaped = False
     for c in contents:
@@ -36,33 +39,48 @@ def compile(in_path, out_path, dry):
                 cmd += c
             else:
                 fout.write(c)
-    if not dry:
-        fout.close() 
 
-def traverse(in_path, out_path, dry):
+    if out_path is not None:
+        fout.close()
+
+def traverse(in_path, out_path):
     if os.path.isfile(in_path):
-        compile(in_path, out_path, dry)
+        compile(in_path, out_path)
     elif os.path.isdir(in_path):
-        if not dry and not os.path.exists(out_path):
+        if out_path is not None and not os.path.exists(out_path):
             os.mkdir(out_path)
         subs = os.listdir(in_path)
         for sub in subs:
-            traverse(in_path + "/" + sub, out_path + "/" + sub, dry)
+            new_in = in_path + "/" + sub
+            new_out = out_path + "/" + sub if out_path != None else None
+            traverse(new_in, new_out)
     else:
         error("Could not find " + in_path)
 
-usage = "usage: %prog input [output]"
+usage = "usage: %prog input [-o output]"
 parser = optparse.OptionParser(usage=usage)
-parser.add_option("-d", "--dry-run", action="store_true", dest="dry", default=False, help="Write generated HTML to stdout instead of the specified file")
+parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
 
 (opts, args) = parser.parse_args()
 
-if len(args) != 1 and len(args) != 2:
-    parser.error("expected 1 required positional argument (input) with one optional positional argument (ouput)")
+if (len(args) != 1):
+    parser.error("expected 1 required positional argument: input")
 
 in_path = args[0]
-out_path = "."
-if len(args) == 2:
-    out_path = args[1]
+out_path = opts.output
 
-traverse(in_path, out_path, opts.dry)
+in_f = os.path.isfile(in_path)
+out_f = out_path is not None and os.path.isfile(out_path)
+in_d = os.path.isdir(in_path)
+out_d = out_path is not None and os.path.isdir(out_path)
+
+if in_d:
+    if out_f:
+        error("Cannot compile directory into file")
+    else:
+        traverse(in_path, out_path)
+else:
+    if out_d:
+        traverse(in_path, out_path + "/" + os.path.split(in_path)[1])
+    else:
+        traverse(in_path, out_path)
