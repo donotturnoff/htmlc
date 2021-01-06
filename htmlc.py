@@ -6,6 +6,16 @@ import sys
 escapable = ["{", "}", "\\"]
 esc = "\\"
 
+usage = "usage: %prog input [-o output]"
+parser = optparse.OptionParser(usage=usage)
+parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
+parser.add_option("-n", "--keep-newline", action="store_true", dest="keep_newline", help="Prevent trailing newline being stripped from command output", default=False)
+
+(opts, args) = parser.parse_args()
+
+if (len(args) != 1):
+    parser.error("expected 1 required positional argument: input")
+
 def error(msg):
     print("[-] " + msg)
     exit()
@@ -28,7 +38,9 @@ def compile(in_path, out_path):
         if c == "{" and not escaped and cmd == None:
             cmd = ""
         elif c == "}" and not escaped and cmd != None:
-            out = subprocess.check_output(cmd, shell=True, text=True).rstrip("\n")
+            out = subprocess.check_output(cmd, shell=True, text=True)
+            if not opts.keep_newline:
+                out = out.rstrip("\n")
             fout.write(out)
             cmd = None
         elif c == "\\" and not escaped:
@@ -56,15 +68,6 @@ def traverse(in_path, out_path):
             traverse(new_in, new_out)
     else:
         error("Could not find " + in_path)
-
-usage = "usage: %prog input [-o output]"
-parser = optparse.OptionParser(usage=usage)
-parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
-
-(opts, args) = parser.parse_args()
-
-if (len(args) != 1):
-    parser.error("expected 1 required positional argument: input")
 
 in_path = args[0]
 out_path = opts.output
