@@ -5,9 +5,10 @@ import os.path
 import subprocess
 import sys
 import re
+from shutil import copyfile
 
-cmd_start = "{"
-cmd_end = "}"
+cmd_start = "`"
+cmd_end = "`"
 esc = "\\"
 
 yes = ["y", "yes"]
