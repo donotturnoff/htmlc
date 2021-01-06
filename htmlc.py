@@ -23,16 +23,22 @@ parser.add_option("-e", "--exclude", action="append", dest="excluded", help="Spe
 if (len(args) != 1):
     parser.error("expected 1 required positional argument: input")
 
+def ask(msg):
+    return input("[?] " + msg)
+
+def info(msg):
+    print("[i] " + msg)
+
 def error(msg):
-    print("[-] " + msg)
+    print("[!] " + msg)
     exit()
 
 def compile(in_path, out_path):
     if opts.verbose:
         if out_path == None:
-            print(in_path)
+            info("Compiling " + in_path)
         else:
-            print(in_path + " -> " + out_path)
+            info("Compiling " + in_path + " -> " + out_path)
 
     contents = None
 
@@ -44,9 +50,9 @@ def compile(in_path, out_path):
         error("Failed to read " + in_path)
 
     if opts.ask and out_path is not None and os.path.exists(out_path):
-        if input("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
+        if ask("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
             if opts.verbose:
-                print("Skipping " + in_path + " (overwrite rejected manually)")
+                info("Skipping " + in_path + " (overwrite rejected manually)")
             return
 
     fout = (open(out_path, "w") if out_path is not None else sys.stdout)
@@ -79,7 +85,7 @@ def traverse(in_path, out_path):
         for ex in opts.excluded:
             if re.match(ex, in_path):
                 if opts.verbose:
-                    print("Skipping " + in_path + " (matched excluded regex " + ex + ")")
+                    info("Skipping " + in_path + " (matched excluded regex " + ex + ")")
                 return
         compile(in_path, out_path)
     elif os.path.isdir(in_path):
