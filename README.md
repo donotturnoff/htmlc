@@ -1,7 +1,7 @@
 # htmlc
 A system to compile static HTML pages from files and program output.
 
-usage: `python3 htmlc.py input [-o output] [-nv]`
+usage: `python3 htmlc.py input [-o output] [-nva]`
 
 Input files are raw HTML with executable commands enclosed within braces. To escape braces, use a backslash. To escape a backslash, use another backslash. See the htms and html directories for examples.
 
@@ -22,3 +22,5 @@ If `-o output` is omitted, the output will be sent to stdout.
 If `-n` is set, any trailing newline characters produced by a command will be kept. Otherwise, they will be discarded.
 
 If `-v` is set, verbose output will be produced
+
+If `-a` is set, a prompt will be displayed before overwriting a file
