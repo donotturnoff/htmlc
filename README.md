@@ -1,9 +1,13 @@
 # htmlc
 A system to compile static HTML pages from files and program output.
 
-usage: `python3 htmlc.py input [-o output]`
+usage: `python3 htmlc.py input [-o output] [-n]`
 
-`input` and `output` can be files or directories. 
+Input files are raw HTML with executable commands enclosed within braces. To escape braces, use a backslash. To escape a backslash, use another backslash. See the htms and html directories for examples.
+
+`-o` specifies the destination for compiled HTML.
+
+`input` and `output` can be files or directories.
 
  - If they are both files, `input` will be compiled to `output`
  - If they both directories, `input` will be traversed and each file compiled to `output` with the same directory structure
@@ -15,4 +19,4 @@ In each case, the output will overwrite any existing files.
 
 If `-o output` is omitted, the output will be sent to stdout. 
 
-Input files are raw HTML with executable commands enclosed within braces. To escape braces, use a backslash. To escape a backslash, use another backslash. See the htms and html directories for examples.
+If `-n` is set, any trailing newline characters produced by a command will be kept. Otherwise, they will be discarded.

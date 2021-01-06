@@ -6,7 +6,7 @@ import sys
 escapable = ["{", "}", "\\"]
 esc = "\\"
 
-usage = "usage: %prog input [-o output]"
+usage = "usage: %prog input [-o output] [-n]"
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
 parser.add_option("-n", "--keep-newline", action="store_true", dest="keep_newline", help="Prevent trailing newline being stripped from command output", default=False)
