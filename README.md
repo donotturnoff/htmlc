@@ -20,3 +20,5 @@ In each case, the output will overwrite any existing files.
 If `-o output` is omitted, the output will be sent to stdout. 
 
 If `-n` is set, any trailing newline characters produced by a command will be kept. Otherwise, they will be discarded.
+
+If `-v` is set, verbose output will be produced
