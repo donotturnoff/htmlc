@@ -1,11 +1,11 @@
-# htmlc
-A system to compile static HTML pages from files and program output.
+# textc
+A system to compile static text files from files and program output.
 
-usage: `python3 htmlc.py input [-o output] [-nva] [-e excluded1 [-e excluded2 [...]]]`
+usage: `python3 text.py input [-o output] [-nva] [-e excluded1 [-e excluded2 [...]]]`
 
-Input files are raw HTML with executable commands enclosed within braces. To escape braces, use a backslash. To escape a backslash, use another backslash. See the htms and html directories for examples.
+Input files are raw text with executable commands enclosed within braces. To escape braces, use a backslash. To escape a backslash, use another backslash. See the src and dst directories for examples.
 
-`-o` specifies the destination for compiled HTML.
+`-o` specifies the destination for compiled text.
 
 `input` and `output` can be files or directories.
 
