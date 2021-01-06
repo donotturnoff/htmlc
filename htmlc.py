@@ -7,10 +7,11 @@ cmd_start = "{"
 cmd_end = "}"
 esc = "\\"
 
-usage = "usage: %prog input [-o output] [-n]"
+usage = "usage: %prog input [-o output] [-nv]"
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
 parser.add_option("-n", "--keep-newline", action="store_true", dest="keep_newline", help="Prevent trailing newline being stripped from command output", default=False)
+parser.add_option("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
 
 (opts, args) = parser.parse_args()
 
@@ -22,6 +23,12 @@ def error(msg):
     exit()
 
 def compile(in_path, out_path):
+    if opts.verbose:
+        if out_path == None:
+            print(in_path)
+        else:
+            print(in_path + " -> " + out_path)
+
     contents = None
 
     fin = open(in_path, "r")
