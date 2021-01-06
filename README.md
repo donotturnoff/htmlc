@@ -26,3 +26,5 @@ If `-v` is set, verbose output will be produced
 If `-a` is set, a prompt will be displayed before overwriting a file
 
 `-e` specifies a regex used to exclude certain files. Several regexes can be specified using several `-e`s
+
+The `CMDDIR` environment variable is made available to any commands executed during compilation. This represents the directory that the command itself resides in (determined by `which`), allowing for use of script-relative paths inside a script
