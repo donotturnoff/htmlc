@@ -2,6 +2,7 @@ import optparse
 import os.path
 import subprocess
 import sys
+import re
 
 cmd_start = "{"
 cmd_end = "}"
@@ -9,12 +10,13 @@ esc = "\\"
 
 yes = ["y", "yes"]
 
-usage = "usage: %prog input [-o output] [-nva]"
+usage = "usage: %prog input [-o output] [-nva] [-e excluded1 [-e excluded2 [...]]]"
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-o", "--output", action="store", dest="output", help="Write generated HTML to the given file or directory rather than stdout")
 parser.add_option("-n", "--keep-newlines", action="store_true", dest="keep_newlines", help="Prevent trailing newline being stripped from command output", default=False)
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
 parser.add_option("-a", "--ask", action="store_true", dest="ask", help="Ask before overwriting file", default=False)
+parser.add_option("-e", "--exclude", action="append", dest="excluded", help="Specify a regex matching files to exclude")
 
 (opts, args) = parser.parse_args()
 
@@ -44,7 +46,7 @@ def compile(in_path, out_path):
     if opts.ask and out_path is not None and os.path.exists(out_path):
         if input("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
             if opts.verbose:
-                print("Skipping " + out_path)
+                print("Skipping " + in_path + " (overwrite rejected manually)")
             return
 
     fout = (open(out_path, "w") if out_path is not None else sys.stdout)
@@ -74,6 +76,11 @@ def compile(in_path, out_path):
 
 def traverse(in_path, out_path):
     if os.path.isfile(in_path):
+        for ex in opts.excluded:
+            if re.match(ex, in_path):
+                if opts.verbose:
+                    print("Skipping " + in_path + " (matched excluded regex " + ex + ")")
+                return
         compile(in_path, out_path)
     elif os.path.isdir(in_path):
         if out_path is not None and not os.path.exists(out_path):
