@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import optparse
+import argparse
 import os.path
 import subprocess
 import sys
@@ -13,18 +13,18 @@ esc = "\\"
 
 yes = ["y", "yes"]
 
-usage = "usage: %prog input [-o output] [-nva] [-e excluded1 [-e excluded2 [...]]]"
-parser = optparse.OptionParser(usage=usage)
-parser.add_option("-o", "--output", action="store", dest="output", help="Write generated text to the given file or directory rather than stdout")
-parser.add_option("-n", "--keep-newlines", action="store_true", dest="keep_newlines", help="Prevent trailing newline being stripped from command output", default=False)
-parser.add_option("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
-parser.add_option("-a", "--ask", action="store_true", dest="ask", help="Ask before overwriting file", default=False)
-parser.add_option("-e", "--exclude", action="append", dest="excluded", help="Specify a regex matching files to exclude", default=[])
+parser = argparse.ArgumentParser()
+parser.add_argument("input", help="Input file or directory")
+parser.add_argument("-o", "--output", action="store", dest="output", help="Write generated text to the given file or directory rather than stdout")
+parser.add_argument("-n", "--keep-newlines", action="store_true", dest="keep_newlines", help="Prevent trailing newline being stripped from command output", default=False)
+parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
+parser.add_argument("-a", "--ask", action="store_true", dest="ask", help="Ask before overwriting file", default=False)
+parser.add_argument("-e", "--exclude", action="append", dest="excluded", help="Specify a regex matching files to exclude", default=[])
 
-(opts, args) = parser.parse_args()
+opts = parser.parse_args()
 
-if (len(args) != 1):
-    parser.error("expected 1 required positional argument: input")
+#if (len(args) != 1):
+#    parser.error("expected 1 required positional argument: input")
 
 def ask(msg):
     return input("[?] " + msg)
@@ -131,7 +131,7 @@ def traverse(in_path, out_path):
     else:
         error("Could not find " + in_path)
 
-in_path = args[0]
+in_path = opts.input
 out_path = opts.output
 
 in_f = os.path.isfile(in_path)
