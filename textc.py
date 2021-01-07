@@ -43,6 +43,12 @@ def compile(in_path, out_path):
     else:
         cwd = opts.cwd
 
+    if opts.ask and out_path is not None and os.path.exists(out_path):
+        if ask("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
+            if opts.verbose:
+                info("Skipping " + in_path + " (overwrite rejected manually)")
+            return
+
     if opts.verbose:
         if out_path == None:
             info("Compiling " + in_path)
@@ -66,12 +72,6 @@ def compile(in_path, out_path):
 
     if contents is None:
         error("Failed to read " + in_path)
-
-    if opts.ask and out_path is not None and os.path.exists(out_path):
-        if ask("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
-            if opts.verbose:
-                info("Skipping " + in_path + " (overwrite rejected manually)")
-            return
 
     fout = None
     try:
