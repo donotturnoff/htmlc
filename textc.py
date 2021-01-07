@@ -20,6 +20,7 @@ parser.add_argument("-n", "--keep-newlines", action="store_true", dest="keep_new
 parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
 parser.add_argument("-a", "--ask", action="store_true", dest="ask", help="Ask before overwriting file", default=False)
 parser.add_argument("-e", "--exclude", action="append", dest="excluded", help="Specify a regex matching files to exclude", default=[])
+parser.add_argument("-d", "--direct-copy", action="append", dest="direct", help="Specify a regex matching files to copy directly without compilation", default=[])
 parser.add_argument("-c", "--cwd", action="store", dest="cwd", help="Set a CWD for all executed commands to use")
 
 args = parser.parse_args()
@@ -46,6 +47,21 @@ def compile(in_path, out_path):
                 info("Skipping " + in_path + " (overwrite rejected manually)")
             return
 
+    # Direct copy if necessary
+    for d in args.direct:
+        if re.match(d, in_path):
+            if args.verbose:
+                if out_path == None:
+                    info("Directly copying " + in_path + " (matched direct copy regex " + d + ")")
+                else:
+                    info("Directly coping " + in_path + " -> " + out_path + " (matched direct copy regex " + d + ")")
+            try:
+                copyfile(in_path, out_path)
+                return
+            except (PermissionError, IOError) as e:
+                error("Failed to directly copy " + in_path + " to " + out_path + ": " + str(e))
+
+
     if args.verbose:
         if out_path == None:
             info("Compiling " + in_path)
@@ -61,7 +77,10 @@ def compile(in_path, out_path):
     except (PermissionError, IOError) as e:
         error("Failed to read " + in_path + ": " + str(e))
     except UnicodeDecodeError:
-        copyfile(in_path, out_path)
+        try:
+            copyfile(in_path, out_path)
+        except (PermissionError, IOError) as e:
+            error("Failed to directly copy " + in_path + " to " + out_path + ": " + str(e))
         return
     finally:
         if fin is not None:
