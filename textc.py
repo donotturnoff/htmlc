@@ -99,7 +99,7 @@ def compile(in_path, out_path):
         escaped = False
         for c in contents:
             if (c == esc or c == cmd_start or c == cmd_end) and args.verbose:
-                info("Encountered special character " + esc + " in " + in_path)
+                info("Encountered special character " + c + " in " + in_path)
 
             if c == cmd_start and not escaped and cmd == None:
                 cmd = ""
