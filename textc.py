@@ -20,6 +20,7 @@ parser.add_argument("-n", "--keep-newlines", action="store_true", dest="keep_new
 parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
 parser.add_argument("-a", "--ask", action="store_true", dest="ask", help="Ask before overwriting file", default=False)
 parser.add_argument("-e", "--exclude", action="append", dest="excluded", help="Specify a regex matching files to exclude", default=[])
+parser.add_argument("-c", "--cwd", action="store", help="Set a CWD for all executed commands to use")
 
 opts = parser.parse_args()
 
@@ -37,7 +38,10 @@ def error(msg):
     exit()
 
 def compile(in_path, out_path):
-    cwd = os.path.split(in_path)[0]
+    if opts.cwd is None:
+        cwd = os.path.split(in_path)[0]
+    else:
+        cwd = opts.cwd
 
     if opts.verbose:
         if out_path == None:
