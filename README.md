@@ -1,5 +1,5 @@
 # textc
-A system to compile static text files from files and program output.
+A system for compiling text files from raw text and program output.
 
 usage: `textc [-h] [-o OUTPUT] [-n] [-v] [-a] [-e EXCLUDED] [-c CWD] [-d DIRECT] input`
 
