@@ -7,6 +7,11 @@ import sys
 import re
 from shutil import copyfile
 
+red = "\033[91m"
+yellow = "\033[93m"
+green = "\033[92m"
+reset = "\033[97m"
+
 cmd_start = "`"
 cmd_end = "`"
 esc = "\\"
@@ -26,13 +31,13 @@ parser.add_argument("-c", "--cwd", action="store", dest="cwd", help="Set a CWD f
 args = parser.parse_args()
 
 def ask(msg):
-    return input("[?] " + msg)
+    return input(yellow + "[?] " + reset + msg)
 
 def info(msg):
-    print("[i] " + msg)
+    print(green + "[i] " + reset + msg)
 
 def error(msg):
-    print("[!] " + msg)
+    print(red + "[!] " + msg + reset)
     exit()
 
 def compile(in_path, out_path):
@@ -56,7 +61,7 @@ def compile(in_path, out_path):
                 if out_path == None:
                     info("Directly copying " + in_path + " (matched direct copy regex " + d + ")")
                 else:
-                    info("Directly coping " + in_path + " -> " + out_path + " (matched direct copy regex " + d + ")")
+                    info("Directly copying " + in_path + " -> " + out_path + " (matched direct copy regex " + d + ")")
             try:
                 copyfile(in_path, out_path)
                 return
@@ -114,7 +119,7 @@ def compile(in_path, out_path):
                             info("Preventing execution of " + cmd)
                     return
                 if args.verbose:
-                    info("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", CMDDIR=" + cmddir + ", SCRIPTPATH=" + scriptpath + ")")
+                    info("Executing " + cmd + " from " + in_path + "(cwd=" + cwd + ", CMDDIR=" + cmddir + ", SCRIPTPATH=" + scriptpath + ")")
                 out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True, env=new_env)
                 if not args.keep_newlines:
                     out = out.rstrip("\n")
