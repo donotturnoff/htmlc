@@ -30,3 +30,5 @@ If `-a` is set, a prompt will be displayed before overwriting a file.
 `-c` specifies a directory to use as the current working directory for any commands executed during compilation.
 
 The `CMDDIR` environment variable is made available to any commands executed during compilation. This represents the directory that the command itself resides in (determined by `which`), allowing for use of script-relative paths inside a script.
+
+The `SCRIPTPATH` environment variable is made available to any commands executed during compilation. This represents the path of the script from which the command was called.
