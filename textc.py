@@ -96,8 +96,8 @@ def compile(in_path, out_path):
         cmd = None
         escaped = False
         for c in contents:
-            if c == esc and args.verbose:
-                info("Encountered escape character " + esc + " in " + in_path)
+            if (c == esc or c == cmd_start or c == cmd_end) and args.verbose:
+                info("Encountered special character " + esc + " in " + in_path)
 
             if c == cmd_start and not escaped and cmd == None:
                 cmd = ""
@@ -106,6 +106,13 @@ def compile(in_path, out_path):
                 new_env = os.environ.copy()
                 new_env["SCRIPTPATH"] = os.path.abspath(in_path)
                 new_env["CMDDIR"] = cmddir
+                if args.ask:
+                    if not ask("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", env=" + str(new_env) + ")? [Y/n]") in yes:
+                        if args.verbose:
+                            info("Preventing execution of " + cmd)
+                    return
+                if args.verbose:
+                    info("Executing " + cmd + " from " + in_path + "(cwd=" + cwd + ", env=" + str(new_env) + ")")
                 out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True, env=new_env)
                 if not args.keep_newlines:
                     out = out.rstrip("\n")
