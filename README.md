@@ -23,7 +23,7 @@ If `-n` is set, any trailing newline characters produced by a command will be ke
 
 If `-v` is set, verbose output will be produced.
 
-If `-a` is set, a prompt will be displayed before overwriting a file.
+If `-a` is set, a prompt will be displayed before overwriting a file or executing a command.
 
 `-e` specifies a regex used to exclude certain files. Several regexes can be specified using several `-e`s.
 
