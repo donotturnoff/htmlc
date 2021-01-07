@@ -41,6 +41,8 @@ def compile(in_path, out_path):
     else:
         cwd = os.path.abspath(args.cwd)
 
+    scriptpath = os.path.abspath(in_path)
+
     if args.ask and out_path is not None and os.path.exists(out_path):
         if ask("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
             if args.verbose:
@@ -104,10 +106,10 @@ def compile(in_path, out_path):
             elif c == cmd_end and not escaped and cmd != None:
                 cmddir = os.path.split(subprocess.check_output("which \"" + cmd.split()[0] + "\"", cwd=cwd, shell=True, text=True).rstrip("\n"))[0] + "/"
                 new_env = os.environ.copy()
-                new_env["SCRIPTPATH"] = os.path.abspath(in_path)
+                new_env["SCRIPTPATH"] = scriptpath
                 new_env["CMDDIR"] = cmddir
                 if args.ask:
-                    if not ask("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", env=" + str(new_env) + ")? [Y/n]") in yes:
+                    if not ask("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", CMDDIR=" + cmddir + ", SCRIPTPATH=" + scriptpath + ")? [Y/n]") in yes:
                         if args.verbose:
                             info("Preventing execution of " + cmd)
                     return
