@@ -1,7 +1,7 @@
 # textc
 A system to compile static text files from files and program output.
 
-usage: `textc [-h] [-o OUTPUT] [-n] [-v] [-a] [-e EXCLUDED] [-c CWD] input`
+usage: `textc [-h] [-o OUTPUT] [-n] [-v] [-a] [-e EXCLUDED] [-c CWD] [-d DIRECT] input`
 
 Input files are raw text with executable commands enclosed within backticks. To escape backticks, use a backslash. To escape a backslash, use another backslash. See the src and dst directories for examples.
 
@@ -28,6 +28,8 @@ If `-a` is set, a prompt will be displayed before overwriting a file.
 `-e` specifies a regex used to exclude certain files. Several regexes can be specified using several `-e`s.
 
 `-c` specifies a directory to use as the current working directory for any commands executed during compilation.
+
+`-d` specifies a regex used to directly copy certain files from input to output without performing any compilation
 
 The `CMDDIR` environment variable is made available to any commands executed during compilation. This represents the directory that the command itself resides in (determined by `which`), allowing for use of script-relative paths inside a script.
 
