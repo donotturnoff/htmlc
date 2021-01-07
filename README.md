@@ -3,7 +3,7 @@ A system to compile static text files from files and program output.
 
 usage: `python3 text.py input [-o output] [-nva] [-e excluded1 [-e excluded2 [...]]]`
 
-Input files are raw text with executable commands enclosed within braces. To escape braces, use a backslash. To escape a backslash, use another backslash. See the src and dst directories for examples.
+Input files are raw text with executable commands enclosed within backticks. To escape backticks, use a backslash. To escape a backslash, use another backslash. See the src and dst directories for examples.
 
 `-o` specifies the destination for compiled text.
 
