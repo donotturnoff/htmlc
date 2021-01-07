@@ -114,7 +114,7 @@ def compile(in_path, out_path):
                             info("Preventing execution of " + cmd)
                     return
                 if args.verbose:
-                    info("Executing " + cmd + " from " + in_path + "(cwd=" + cwd + ", env=" + str(new_env) + ")")
+                    info("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", CMDDIR=" + cmddir + ", SCRIPTPATH=" + scriptpath + ")")
                 out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True, env=new_env)
                 if not args.keep_newlines:
                     out = out.rstrip("\n")
