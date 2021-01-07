@@ -91,6 +91,8 @@ def compile(in_path, out_path):
                 cmd = None
             elif c == esc and not escaped:
                 escaped = True
+            elif escaped and not (c == cmd_start or c == cmd_end or c == esc):
+                error("Invalid escaped character encountered in " + in_path + ": " + c)
             else:
                 escaped = False
                 if cmd != None:
