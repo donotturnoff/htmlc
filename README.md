@@ -1,7 +1,7 @@
 # textc
 A system to compile static text files from files and program output.
 
-usage: `python3 text.py input [-o output] [-nva] [-e excluded1 [-e excluded2 [...]]]`
+usage: `textc [-h] [-o OUTPUT] [-n] [-v] [-a] [-e EXCLUDED] [-c CWD] input`
 
 Input files are raw text with executable commands enclosed within backticks. To escape backticks, use a backslash. To escape a backslash, use another backslash. See the src and dst directories for examples.
 
@@ -21,10 +21,12 @@ If `-o output` is omitted, the output will be sent to stdout.
 
 If `-n` is set, any trailing newline characters produced by a command will be kept. Otherwise, they will be discarded.
 
-If `-v` is set, verbose output will be produced
+If `-v` is set, verbose output will be produced.
 
-If `-a` is set, a prompt will be displayed before overwriting a file
+If `-a` is set, a prompt will be displayed before overwriting a file.
 
-`-e` specifies a regex used to exclude certain files. Several regexes can be specified using several `-e`s
+`-e` specifies a regex used to exclude certain files. Several regexes can be specified using several `-e`s.
 
-The `CMDDIR` environment variable is made available to any commands executed during compilation. This represents the directory that the command itself resides in (determined by `which`), allowing for use of script-relative paths inside a script
+`-c` specifies a directory to use as the current working directory for any commands executed during compilation.
+
+The `CMDDIR` environment variable is made available to any commands executed during compilation. This represents the directory that the command itself resides in (determined by `which`), allowing for use of script-relative paths inside a script.
