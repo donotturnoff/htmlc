@@ -20,12 +20,9 @@ parser.add_argument("-n", "--keep-newlines", action="store_true", dest="keep_new
 parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Produce verbose output", default=False)
 parser.add_argument("-a", "--ask", action="store_true", dest="ask", help="Ask before overwriting file", default=False)
 parser.add_argument("-e", "--exclude", action="append", dest="excluded", help="Specify a regex matching files to exclude", default=[])
-parser.add_argument("-c", "--cwd", action="store", help="Set a CWD for all executed commands to use")
+parser.add_argument("-c", "--cwd", action="store", dest="cwd", help="Set a CWD for all executed commands to use")
 
-opts = parser.parse_args()
-
-#if (len(args) != 1):
-#    parser.error("expected 1 required positional argument: input")
+args = parser.parse_args()
 
 def ask(msg):
     return input("[?] " + msg)
@@ -38,18 +35,18 @@ def error(msg):
     exit()
 
 def compile(in_path, out_path):
-    if opts.cwd is None:
+    if args.cwd is None:
         cwd = os.path.split(in_path)[0]
     else:
-        cwd = opts.cwd
+        cwd = args.cwd
 
-    if opts.ask and out_path is not None and os.path.exists(out_path):
+    if args.ask and out_path is not None and os.path.exists(out_path):
         if ask("Overwrite " + out_path + "? [y/N] ").lower() not in yes:
-            if opts.verbose:
+            if args.verbose:
                 info("Skipping " + in_path + " (overwrite rejected manually)")
             return
 
-    if opts.verbose:
+    if args.verbose:
         if out_path == None:
             info("Compiling " + in_path)
         else:
@@ -87,7 +84,7 @@ def compile(in_path, out_path):
                 new_env = os.environ.copy()
                 new_env["CMDDIR"] = cmddir
                 out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True, env=new_env)
-                if not opts.keep_newlines:
+                if not args.keep_newlines:
                     out = out.rstrip("\n")
                 fout.write(out)
                 cmd = None
@@ -112,9 +109,9 @@ def compile(in_path, out_path):
 
 def traverse(in_path, out_path):
     if os.path.isfile(in_path):
-        for ex in opts.excluded:
+        for ex in args.excluded:
             if re.match(ex, in_path):
-                if opts.verbose:
+                if args.verbose:
                     info("Skipping " + in_path + " (matched excluded regex " + ex + ")")
                 return
         compile(in_path, out_path)
@@ -135,8 +132,8 @@ def traverse(in_path, out_path):
     else:
         error("Could not find " + in_path)
 
-in_path = opts.input
-out_path = opts.output
+in_path = args.input
+out_path = args.output
 
 in_f = os.path.isfile(in_path)
 out_f = out_path is not None and os.path.isfile(out_path)
