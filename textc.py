@@ -82,6 +82,7 @@ def compile(in_path, out_path):
             elif c == cmd_end and not escaped and cmd != None:
                 cmddir = os.path.split(subprocess.check_output("which \"" + cmd.split()[0] + "\"", cwd=cwd, shell=True, text=True).rstrip("\n"))[0] + "/"
                 new_env = os.environ.copy()
+                new_env["SCRIPTPATH"] = in_path
                 new_env["CMDDIR"] = cmddir
                 out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True, env=new_env)
                 if not args.keep_newlines:
