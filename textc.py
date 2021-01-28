@@ -36,9 +36,9 @@ def ask(msg):
 def info(msg):
     print(green + "[i] " + reset + msg)
 
-def error(msg):
+def error(msg, code=127):
     print(red + "[!] " + msg + reset)
-    exit()
+    sys.exit(code)
 
 def compile(in_path, out_path):
     if args.cwd is None:
@@ -66,7 +66,7 @@ def compile(in_path, out_path):
                 copyfile(in_path, out_path)
                 return
             except (PermissionError, IOError) as e:
-                error("Failed to directly copy " + in_path + " to " + out_path + ": " + str(e))
+                error("Failed to directly copy " + in_path + " to " + out_path + ": " + str(e), 8)
 
 
     if args.verbose:
@@ -82,19 +82,19 @@ def compile(in_path, out_path):
         fin = open(in_path, "r")
         contents = fin.read()
     except (PermissionError, IOError) as e:
-        error("Failed to read " + in_path + ": " + str(e))
+        error("Failed to read " + in_path + ": " + str(e), 5)
     except UnicodeDecodeError:
         try:
             copyfile(in_path, out_path)
         except (PermissionError, IOError) as e:
-            error("Failed to directly copy " + in_path + " to " + out_path + ": " + str(e))
+            error("Failed to directly copy " + in_path + " to " + out_path + ": " + str(e), 8)
         return
     finally:
         if fin is not None:
             fin.close()
 
     if contents is None:
-        error("Failed to read " + in_path)
+        error("Failed to read " + in_path, 5)
 
     fout = None
     try:
@@ -135,9 +135,9 @@ def compile(in_path, out_path):
         if out_path is not None:
             fout.close()
     except (PermissionError, IOError) as e:
-        error("Failed to write to " + out_path + ": " + str(e))
+        error("Failed to write to " + out_path + ": " + str(e), 6)
     except subprocess.CalledProcessError as e:
-        error("Failed to execute process " + cmd + " from file " + in_path + ": " + str(e))
+        error("Failed to execute process " + cmd + " from file " + in_path + ": " + str(e), 7)
     finally:
         if fout is not None and out_path is not None:
             fout.close()
@@ -155,17 +155,17 @@ def traverse(in_path, out_path):
             try:
                 os.mkdir(out_path)
             except (PermissionError, IOError) as e:
-                error("Failed to create directory " + out_path + ": " + str(e))
+                error("Failed to create directory " + out_path + ": " + str(e), 3)
         try:
             subs = os.listdir(in_path)
         except (PermissionError) as e:
-            error("Failed to read directory listing of " + in_path + ": " + str(e))
+            error("Failed to read directory listing of " + in_path + ": " + str(e), 4)
         for sub in subs:
             new_in = in_path + "/" + sub
             new_out = out_path + "/" + sub if out_path != None else None
             traverse(new_in, new_out)
     else:
-        error("Could not find " + in_path)
+        error("Could not find " + in_path, 2)
 
 in_path = args.input
 out_path = args.output
@@ -177,7 +177,7 @@ out_d = out_path is not None and os.path.isdir(out_path)
 
 if in_d:
     if out_f:
-        error("Cannot compile directory into file")
+        error("Cannot compile directory into file", 1)
     else:
         traverse(in_path, out_path)
 else:
