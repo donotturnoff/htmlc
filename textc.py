@@ -109,17 +109,15 @@ def compile(in_path, out_path):
             if c == cmd_start and not escaped and cmd == None:
                 cmd = ""
             elif c == cmd_end and not escaped and cmd != None:
-                cmddir = os.path.split(subprocess.check_output("which \"" + cmd.split()[0] + "\"", cwd=cwd, shell=True, text=True).rstrip("\n"))[0] + "/"
                 new_env = os.environ.copy()
                 new_env["SCRIPTPATH"] = scriptpath
-                new_env["CMDDIR"] = cmddir
                 if args.ask:
-                    if not ask("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", CMDDIR=" + cmddir + ", SCRIPTPATH=" + scriptpath + ")? [Y/n]") in yes:
+                    if not ask("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", SCRIPTPATH=" + scriptpath + ")? [Y/n]") in yes:
                         if args.verbose:
                             info("Preventing execution of " + cmd)
                     return
                 if args.verbose:
-                    info("Executing " + cmd + " from " + in_path + "(cwd=" + cwd + ", CMDDIR=" + cmddir + ", SCRIPTPATH=" + scriptpath + ")")
+                    info("Executing " + cmd + " from " + in_path + "(cwd=" + cwd + ", SCRIPTPATH=" + scriptpath + ")")
                 out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True, env=new_env)
                 if not args.keep_newlines:
                     out = out.rstrip("\n")
