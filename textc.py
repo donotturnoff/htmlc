@@ -27,6 +27,7 @@ parser.add_argument("-a", "--ask", action="store_true", dest="ask", help="Ask be
 parser.add_argument("-e", "--exclude", action="append", dest="excluded", help="Specify a regex matching files to exclude", default=[])
 parser.add_argument("-d", "--direct-copy", action="append", dest="direct", help="Specify a regex matching files to copy directly without compilation", default=[])
 parser.add_argument("-c", "--cwd", action="store", dest="cwd", help="Set a CWD for all executed commands to use")
+parser.add_argument("-t", "--ignore-timestamps", action="store_true", dest="ignore_timestamps", help="Do not use timestamps to decide whether or not to compile a file", default=False)
 
 args = parser.parse_args()
 
@@ -112,12 +113,12 @@ def compile(in_path, out_path):
                 new_env = os.environ.copy()
                 new_env["SCRIPTPATH"] = scriptpath
                 if args.ask:
-                    if not ask("Execute " + cmd + " from " + in_path + "(cwd=" + cwd + ", SCRIPTPATH=" + scriptpath + ")? [Y/n]") in yes:
+                    if not ask("Execute " + cmd + " from " + in_path + " (cwd=" + cwd + ", SCRIPTPATH=" + scriptpath + ")? [Y/n]") in yes:
                         if args.verbose:
                             info("Preventing execution of " + cmd)
                     return
                 if args.verbose:
-                    info("Executing " + cmd + " from " + in_path + "(cwd=" + cwd + ", SCRIPTPATH=" + scriptpath + ")")
+                    info("Executing " + cmd + " from " + in_path + " (cwd=" + cwd + ", SCRIPTPATH=" + scriptpath + ")")
                 out = subprocess.check_output(cmd, cwd=cwd, shell=True, text=True, env=new_env)
                 if not args.keep_newlines:
                     out = out.rstrip("\n")
@@ -149,6 +150,10 @@ def traverse(in_path, out_path):
                 if args.verbose:
                     info("Skipping " + in_path + " (matched excluded regex " + ex + ")")
                 return
+        if not args.ignore_timestamps and os.path.getmtime(in_path) < os.path.getmtime(out_path):
+            if args.verbose:
+                info("Skipping " + in_path + " (no modifications since last compilation)")
+            return
         compile(in_path, out_path)
     elif os.path.isdir(in_path):
         if out_path is not None and not os.path.exists(out_path):
