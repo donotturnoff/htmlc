@@ -150,7 +150,7 @@ def traverse(in_path, out_path):
                 if args.verbose:
                     info("Skipping " + in_path + " (matched excluded regex " + ex + ")")
                 return
-        if not args.ignore_timestamps and os.path.isfile(out_path) and os.path.getmtime(in_path) < os.path.getmtime(out_path):
+        if not args.ignore_timestamps and out_path is not None and os.path.isfile(out_path) and os.path.getmtime(in_path) < os.path.getmtime(out_path):
             if args.verbose:
                 info("Skipping " + in_path + " (no modifications since last compilation)")
             return
